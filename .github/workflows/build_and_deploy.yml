@@ -1,0 +1,40 @@
+name: Build and Push to Artifact Registry
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGION: asia-southeast2
+  APP_NAME: capstone
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGISTRY_NAME: ${{ secrets.GCP_REGISTRY_NAME }}
+  TAG: latest
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository to the runner
+        uses: actions/checkout@v4
+
+      - name: Set up ADC
+        id: "auth"
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authorize Docker push
+        run: gcloud auth configure-docker $REGION-docker.pkg.dev
+
+      - name: Build the Docker image
+        run: |
+          docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/$REGISTRY_NAME/$APP_NAME:$TAG .
+
+      - name: Push to Artifact Registry
+        run: |
+          docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REGISTRY_NAME/$APP_NAME:$TAG
