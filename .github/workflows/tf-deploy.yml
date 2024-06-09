@@ -5,9 +5,7 @@ on:
     workflows: [Build and Push to Artifact Registry]
     types:
       - completed
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   terraform:
@@ -38,7 +36,7 @@ jobs:
 
         id: init
 
-        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
+        run: terraform init
 
       - name: Terraform format
 
