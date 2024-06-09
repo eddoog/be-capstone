@@ -2,7 +2,7 @@
 
 cd deployment
 
-terraform init
+terraform init -backend-config="bucket=bucket-capstone-425808"
 
 terraform fmt
 

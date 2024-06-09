@@ -5,10 +5,10 @@ provider "google" {
 
 terraform {
   backend "gcs" {
-    bucket  = var.bucket_name
-    prefix  = "terraform/state"
+    bucket = "bucket-capstone-425808"
+    prefix = "terraform/state"
   }
-  
+
 }
 
 
