@@ -5,6 +5,9 @@ on:
     workflows: [Build and Push to Artifact Registry]
     types:
       - completed
+  push:
+    branches:
+      - main
 
 jobs:
   terraform:
@@ -53,15 +56,15 @@ jobs:
 
         id: plan
 
-        if: github.ref == 'refs/heads/main'
+        if: github.event_name == 'pull_request'
 
         run: terraform plan -no-color -input=false
 
         continue-on-error: true
 
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
 
-        if: github.ref == 'refs/heads/main'
+        if: github.event_name == 'pull_request'
 
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
