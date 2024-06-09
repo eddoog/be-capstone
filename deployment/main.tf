@@ -3,6 +3,9 @@ provider "google" {
   region  = var.cloudrun_location
 }
 
+resource "google_project_service" "cloud_run_api" {
+  service = "run.googleapis.com"
+}
 
 resource "google_cloud_run_service_iam_policy" "noauth" {
   location = var.cloudrun_location
@@ -38,8 +41,12 @@ resource "google_cloud_run_v2_service" "production" {
         bucket    = google_storage_bucket.bucket.name
         read_only = false
       }
-    }
+    } 
   }
+
+  depends_on = [
+    google_project_service.cloud_run_api
+  ]
 }
 
 resource "google_storage_bucket" "bucket" {
