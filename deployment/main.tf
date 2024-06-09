@@ -40,10 +40,6 @@ resource "google_cloud_run_v2_service" "production" {
       ports {
         container_port = 8080
       }
-      env {
-        name="PORT"
-        value="8080"
-      }
 
       volume_mounts {
         name       = "bucket"
