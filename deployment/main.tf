@@ -12,14 +12,6 @@ resource "google_project_service" "cloud_run_api" {
   service = "run.googleapis.com"
 }
 
-resource "google_cloud_run_service_iam_policy" "noauth" {
-  location = google_cloud_run_v2_service.production.location
-  project  = var.gcp_project_id
-  service  = google_cloud_run_v2_service.production.name
-
-  policy_data = data.google_iam_policy.noauth.policy_data
-}
-
 resource "google_storage_bucket_iam_policy" "editor" {
   bucket      = google_storage_bucket.bucket.name
   policy_data = data.google_iam_policy.viewer.policy_data
@@ -27,13 +19,18 @@ resource "google_storage_bucket_iam_policy" "editor" {
 
 
 resource "google_cloud_run_v2_service" "production" {
-  name = var.cloudrun_name
+  name         = var.cloudrun_name
+  location     = var.cloudrun_location
+  launch_stage = "BETA"
+  ingress      = "INGRESS_TRAFFIC_ALL"
 
-  location = var.cloudrun_location
 
   template {
     containers {
       image = var.image
+      ports {
+        container_port = 8080
+      }
       volume_mounts {
         name       = "bucket"
         mount_path = "/models"
