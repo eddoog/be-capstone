@@ -46,7 +46,7 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /app/server
-COPY .env /app/.env
+RUN echo "PORT=$PORT" > /app/.env
 
 # Run the web service on container startup.
 
