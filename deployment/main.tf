@@ -16,13 +16,13 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 }
 
 resource "google_storage_bucket_iam_policy" "editor" {
-  bucket = google_storage_bucket.bucket.name
+  bucket      = google_storage_bucket.bucket.name
   policy_data = data.google_iam_policy.viewer.policy_data
 }
 
 
 resource "google_cloud_run_v2_service" "production" {
-  name     = var.cloudrun_name
+  name = var.cloudrun_name
 
   location = var.cloudrun_location
 
@@ -41,7 +41,7 @@ resource "google_cloud_run_v2_service" "production" {
         bucket    = google_storage_bucket.bucket.name
         read_only = false
       }
-    } 
+    }
   }
 
   depends_on = [
@@ -50,10 +50,10 @@ resource "google_cloud_run_v2_service" "production" {
 }
 
 resource "google_storage_bucket" "bucket" {
-    project = var.gcp_project_id
-    name     = var.bucket_name
-    location = var.bucket_location
-    storage_class = "STANDARD"
+  project       = var.gcp_project_id
+  name          = var.bucket_name
+  location      = var.bucket_location
+  storage_class = "STANDARD"
 }
 
 data "google_iam_policy" "noauth" {
@@ -69,7 +69,7 @@ data "google_iam_policy" "viewer" {
   binding {
     role = "roles/storage.objectViewer"
     members = [
-        "allUsers",
-    ] 
+      "allUsers",
+    ]
   }
 }

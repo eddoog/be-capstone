@@ -29,10 +29,10 @@ variable "cloudrun_location" {
 }
 
 variable "cloudrun_name" {
-    description = "The Name of the Cloud Run service to create."
-    type        = string
-    default     = "capstone"
-    
+  description = "The Name of the Cloud Run service to create."
+  type        = string
+  default     = "capstone"
+
 }
 
 variable "bucket_name" {
