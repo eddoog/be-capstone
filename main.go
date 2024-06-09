@@ -1,6 +1,16 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"os"
+
+	"github.com/eddoog/be-capstone/pkg"
+	"github.com/gofiber/fiber/v2"
+)
+
+func init() {
+	pkg.InitLog()
+	pkg.LoadEnv()
+}
 
 func main() {
 	app := fiber.New()
@@ -9,5 +19,5 @@ func main() {
 		return c.SendString("Hello, World!")
 	})
 
-	app.Listen(":3000")
+	app.Listen(":" + os.Getenv("PORT"))
 }
