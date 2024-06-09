@@ -8,9 +8,9 @@ resource "google_project_service" "cloud_run_api" {
 }
 
 resource "google_cloud_run_service_iam_policy" "noauth" {
-  location = var.cloudrun_location
+  location = google_cloud_run_v2_service.production.location
   project  = var.gcp_project_id
-  service  = var.cloudrun_name
+  service  = google_cloud_run_v2_service.production.name
 
   policy_data = data.google_iam_policy.noauth.policy_data
 }
