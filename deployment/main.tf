@@ -3,6 +3,11 @@ provider "google" {
   region  = var.cloudrun_location
 }
 
+resource "google_project_service" "service_usage" {
+  project = var.gcp_project_id
+  service = "serviceusage.googleapis.com"
+}
+
 resource "google_project_service" "cloud_run_api" {
   service = "run.googleapis.com"
 }
