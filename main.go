@@ -8,8 +8,8 @@ import (
 )
 
 func init() {
-	pkg.InitLog()
 	pkg.LoadEnv()
+	pkg.InitLog()
 }
 
 func main() {

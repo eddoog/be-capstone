@@ -23,7 +23,6 @@ FROM golang:1.22-bookworm AS builder
 # Create and change to the app directory.
 WORKDIR /app
 
-# Retrieve application dependencies.
 # This allows the container build to reuse cached dependencies.
 # Expecting to copy go.mod and if present go.sum.
 COPY go.* ./
@@ -39,6 +38,7 @@ RUN go build -v -o server
 # https://hub.docker.com/_/debian
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
 FROM debian:bookworm-slim
+ENV PORT=8080
 
 RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates && \
@@ -46,10 +46,10 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /app/server
-
-ENV PORT=8080
+COPY .env /app/.env
 
 # Run the web service on container startup.
+
 CMD ["/app/server"]
 
 # [END run_helloworld_dockerfile]
