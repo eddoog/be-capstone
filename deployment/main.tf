@@ -3,6 +3,15 @@ provider "google" {
   region  = var.cloudrun_location
 }
 
+terraform {
+  backend "gcs" {
+    bucket  = var.bucket_name
+    prefix  = "terraform/state"
+  }
+  
+}
+
+
 resource "google_project_service" "service_usage" {
   project = var.gcp_project_id
   service = "serviceusage.googleapis.com"
@@ -56,6 +65,7 @@ resource "google_storage_bucket" "bucket" {
   name          = var.bucket_name
   location      = var.bucket_location
   storage_class = "STANDARD"
+
 }
 
 data "google_iam_policy" "noauth" {
