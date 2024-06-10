@@ -8,9 +8,15 @@ terraform {
     bucket = "bucket-capstone-425808"
     prefix = "terraform/state"
   }
-
 }
 
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location = google_cloud_run_v2_service.production.location
+  project  = var.gcp_project_id
+  service  = google_cloud_run_v2_service.production.name
+
+  policy_data = data.google_iam_policy.noauth.policy_data
+}
 
 resource "google_project_service" "service_usage" {
   project = var.gcp_project_id
