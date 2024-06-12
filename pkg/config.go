@@ -8,6 +8,6 @@ type Config struct {
 func NewConfig() *Config {
 	return &Config{
 		TimeWindow: 60,
-		ApiUrl:     "https://d.meteostat.net/app/proxy/stations/hourly",
+		ApiUrl:     "https://d.meteostat.net/app/proxy/stations/daily",
 	}
 }
