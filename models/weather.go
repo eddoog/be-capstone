@@ -1,5 +1,7 @@
 package models
 
+import "encoding/json"
+
 type Weather struct {
 	Date string  `json:"date"` // Date in YYYY-MM-DD format
 	Tavg float64 `json:"tavg"` // Average temperature in °C
@@ -12,4 +14,13 @@ type Weather struct {
 	Wpgt float64 `json:"wpgt"` // Peak wind gust in km/h
 	Pres float64 `json:"pres"` // Air pressure in hPa
 	Tsun float64 `json:"tsun"` // Sunshine duration in minutes
+}
+
+func MarshalWeather(data []byte) ([]Weather, error) {
+	var weather []Weather
+	err := json.Unmarshal(data, &weather)
+	if err != nil {
+		return nil, err
+	}
+	return weather, nil
 }
