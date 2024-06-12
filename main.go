@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/eddoog/be-capstone/api"
 	"github.com/eddoog/be-capstone/pkg"
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,6 +19,8 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
+
+	api.SetupV1API(app)
 
 	app.Listen(":" + os.Getenv("PORT"))
 }
