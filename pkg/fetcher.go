@@ -11,20 +11,20 @@ import (
 )
 
 func FetchDailyWeatherData(
-	stationId string,
+	stationId int,
 	startDate string,
 	wg *sync.WaitGroup,
-	ch chan<- []models.Weather,
+	ch chan<- models.WeatherResultChannel,
 	errCh chan<- error,
 ) {
 	defer wg.Done()
-	defer SendInfoLog("Finished fetching data for station " + stationId)
+	defer SendInfoLog("Finished fetching data for station " + strconv.Itoa(stationId))
 
 	currentTime := time.Now()
 
 	formattedDate := currentTime.Format("2006-01-02")
 
-	apiUrl := GetApiUrl() + "?station=" + stationId + "&start=" + startDate + "&end=" + formattedDate
+	apiUrl := GetApiUrl() + "?station=" + strconv.Itoa(stationId) + "&start=" + startDate + "&end=" + formattedDate
 
 	SendInfoLog("Fetching data from " + apiUrl)
 
@@ -57,22 +57,25 @@ func FetchDailyWeatherData(
 		return
 	}
 
-	ch <- weather
+	ch <- models.WeatherResultChannel{
+		StationId: stationId,
+		Data:      weather,
+	}
 }
 
-func FetchAllStationsData(startDate string) ([]models.Weather, error) {
+func FetchAllStationsData(startDate string) (map[int][]models.Weather, error) {
 	stations := GetStations()
 
 	var wg sync.WaitGroup
 
-	weatherCh := make(chan []models.Weather, len(stations))
+	weatherCh := make(chan models.WeatherResultChannel, len(stations))
 
 	errCh := make(chan error, len(stations))
 
 	for _, station := range stations {
 		wg.Add(1)
 
-		go FetchDailyWeatherData(strconv.Itoa(station.StationId), startDate, &wg, weatherCh, errCh)
+		go FetchDailyWeatherData(station.StationId, startDate, &wg, weatherCh, errCh)
 	}
 
 	wg.Wait()
@@ -80,15 +83,15 @@ func FetchAllStationsData(startDate string) ([]models.Weather, error) {
 	close(weatherCh)
 	close(errCh)
 
-	var allWeather []models.Weather
+	weatherDataMap := make(map[int][]models.Weather)
 
-	for weather := range weatherCh {
-		allWeather = append(allWeather, weather...)
+	for result := range weatherCh {
+		weatherDataMap[result.StationId] = append(weatherDataMap[result.StationId], result.Data...)
 	}
 
 	if len(errCh) > 0 {
 		return nil, <-errCh
 	}
 
-	return allWeather, nil
+	return weatherDataMap, nil
 }
