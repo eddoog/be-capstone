@@ -1,11 +1,14 @@
 package pkg
 
 import (
+	"sync"
+
 	"github.com/eddoog/be-capstone/models"
 )
 
 var (
 	placesInstances *models.Places
+	placesOnce      sync.Once
 )
 
 func InitializePlaces() {
@@ -281,7 +284,7 @@ func InitializePlaces() {
 }
 
 func GetPlaces() *models.Places {
-	once.Do(InitializePlaces)
+	placesOnce.Do(InitializePlaces)
 
 	return placesInstances
 }

@@ -1,7 +1,10 @@
 package pkg
 
+import "sync"
+
 var (
 	globalConfig *Config
+	configOnce   sync.Once
 )
 
 type Config struct {
@@ -10,15 +13,13 @@ type Config struct {
 }
 
 func GetConfig() *Config {
-	once.Do(func() {
-		globalConfig = NewConfig()
-	})
+	configOnce.Do(InitializeConfig)
 
 	return globalConfig
 }
 
-func NewConfig() *Config {
-	return &Config{
+func InitializeConfig() {
+	globalConfig = &Config{
 		TimeWindow: 60,
 		ApiUrl:     "https://d.meteostat.net/app/proxy/stations/daily",
 	}

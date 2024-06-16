@@ -11,7 +11,6 @@ import (
 func init() {
 	pkg.LoadEnv()
 	pkg.InitLog()
-	pkg.NewConfig()
 }
 
 func main() {

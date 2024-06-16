@@ -1,11 +1,14 @@
 package pkg
 
 import (
+	"sync"
+
 	"github.com/eddoog/be-capstone/models"
 )
 
 var (
 	stasionsInstance []*models.Station
+	stationOnce      sync.Once
 )
 
 func InitializeStation() {
@@ -26,6 +29,6 @@ func InitializeStation() {
 }
 
 func GetStations() []*models.Station {
-	once.Do(InitializeStation)
+	stationOnce.Do(InitializeStation)
 	return stasionsInstance
 }
