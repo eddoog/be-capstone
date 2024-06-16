@@ -1,10 +1,7 @@
 package pkg
 
-import "sync"
-
 var (
 	globalConfig *Config
-	configOnce   sync.Once
 )
 
 type Config struct {
@@ -13,7 +10,7 @@ type Config struct {
 }
 
 func GetConfig() *Config {
-	configOnce.Do(func() {
+	once.Do(func() {
 		globalConfig = NewConfig()
 	})
 
