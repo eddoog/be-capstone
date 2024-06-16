@@ -16,11 +16,18 @@ type Weather struct {
 	Tsun float64 `json:"tsun"` // Sunshine duration in minutes
 }
 
+type WeatherResponse struct {
+	Meta struct {
+		Generated string `json:"generated"`
+	} `json:"meta"`
+	Data []Weather `json:"data"`
+}
+
 func MarshalWeather(data []byte) ([]Weather, error) {
-	var weather []Weather
-	err := json.Unmarshal(data, &weather)
+	var weatherResponse WeatherResponse
+	err := json.Unmarshal(data, &weatherResponse)
 	if err != nil {
 		return nil, err
 	}
-	return weather, nil
+	return weatherResponse.Data, nil
 }
