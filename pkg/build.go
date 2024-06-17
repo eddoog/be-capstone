@@ -1,15 +1,17 @@
 package pkg
 
 import (
+	"fmt"
+
 	"github.com/eddoog/be-capstone/models"
 	tf "github.com/galeone/tensorflow/tensorflow/go"
 )
 
-func BuildStationMapTf(weatherMap map[string][]models.Weather) (map[string][][]float64, error) {
+func BuildStationMapTf(weatherMap map[string][]models.Weather) (map[string][][][]float64, error) {
 	// BuildStationMapTf is a function to build a map of stations
 	// with the key is the station name and the value is the tensorflow array
 
-	tfMapArray := make(map[string][][]float64)
+	tfMapArray := make(map[string][][][]float64)
 
 	for stationName, weathers := range weatherMap {
 		tfArray := make([][]float64, len(weathers))
@@ -25,8 +27,10 @@ func BuildStationMapTf(weatherMap map[string][]models.Weather) (map[string][][]f
 			tfArray[idx] = convertedWeather.Value().([]float64)
 		}
 
-		tfMapArray[stationName] = tfArray
+		tfMapArray[stationName] = [][][]float64{tfArray}
 	}
+
+	fmt.Println(tfMapArray)
 
 	return tfMapArray, nil
 }
