@@ -14,14 +14,15 @@ func BuildStationMapTf(weatherMap map[string][]models.Weather) (map[string][][]f
 	for stationName, weathers := range weatherMap {
 		tfArray := make([][]float64, len(weathers))
 
-		for _, weather := range weathers {
+		for idx, weather := range weathers {
 			convertedWeather, err := buildTfArray(weather)
 
 			if err != nil {
+				SendWarnLog(err.Error())
 				return nil, err
 			}
 
-			tfArray = append(tfArray, convertedWeather.Value().([]float64))
+			tfArray[idx] = convertedWeather.Value().([]float64)
 		}
 
 		tfMapArray[stationName] = tfArray

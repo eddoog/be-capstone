@@ -8,7 +8,7 @@ import (
 )
 
 func Predict(c *fiber.Ctx) error {
-	startDate, err := pkg.GetPastDate(pkg.GetTimeWindow())
+	startDate, err := pkg.GetPastDate(pkg.GetTimeWindow() - 1)
 
 	if err != nil {
 		return c.Status(500).JSON(
