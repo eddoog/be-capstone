@@ -8,7 +8,9 @@ import (
 
 var (
 	stasionsInstance []*models.Station
+	outputModelName  map[string]string
 	stationOnce      sync.Once
+	outputNameOnce   sync.Once
 )
 
 func InitializeStation() {
@@ -28,7 +30,20 @@ func InitializeStation() {
 	}
 }
 
+func InitializeModelOutputName() {
+	outputModelName = map[string]string{
+		"Kemayoran":    "serving_default_input_6",
+		"TanjungPriok": "serving_default_input_1",
+		"Halim":        "serving_default_input_2",
+	}
+}
+
 func GetStations() []*models.Station {
 	stationOnce.Do(InitializeStation)
 	return stasionsInstance
+}
+
+func GetOutputModelName() map[string]string {
+	outputNameOnce.Do(InitializeModelOutputName)
+	return outputModelName
 }
