@@ -12,7 +12,7 @@ func BuildStationMapTf(weatherMap map[string][]models.Weather) (map[string]*tf.T
 	tfMapArray := make(map[string]*tf.Tensor)
 
 	for stationName, weathers := range weatherMap {
-		tfArray := make([][]float64, len(weathers))
+		tfArray := make([][]float32, len(weathers))
 
 		for idx, weather := range weathers {
 			convertedWeather, err := buildTfArray(weather)
@@ -22,10 +22,10 @@ func BuildStationMapTf(weatherMap map[string][]models.Weather) (map[string]*tf.T
 				return nil, err
 			}
 
-			tfArray[idx] = convertedWeather.Value().([]float64)
+			tfArray[idx] = convertedWeather.Value().([]float32)
 		}
 
-		threeDimArray := [][][]float64{tfArray}
+		threeDimArray := [][][]float32{tfArray}
 		tensor, err := tf.NewTensor(threeDimArray)
 		if err != nil {
 			SendWarnLog(err.Error())
@@ -39,7 +39,7 @@ func BuildStationMapTf(weatherMap map[string][]models.Weather) (map[string]*tf.T
 }
 
 func buildTfArray(weather models.Weather) (*tf.Tensor, error) {
-	return tf.NewTensor([]float64{
+	return tf.NewTensor([]float32{
 		weather.Prcp,
 		weather.Tavg,
 		weather.Wspd,
