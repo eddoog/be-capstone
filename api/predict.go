@@ -11,16 +11,21 @@ func Predict(c *fiber.Ctx) error {
 	startDate, err := pkg.GetPastDate(pkg.GetTimeWindow())
 
 	if err != nil {
-		return c.Status(500).SendString("Error getting past date")
+		return c.Status(500).JSON(
+			pkg.GetErrorMap(
+				fmt.Errorf("error getting past date"), int16(500),
+			),
+		)
 	}
 
 	weathersData, err := pkg.FetchAllStationsData(startDate)
 
 	if err != nil {
-		return c.Status(500).SendString("Error fetching weathers data")
+		return c.Status(500).JSON(pkg.GetErrorMap(
+			fmt.Errorf("error fetching all stations data"), int16(500)))
 	}
 
-	fmt.Println(weathersData)
+	pkg.BuildStationMapTf(weathersData)
 
-	return c.SendString("Predict")
+	return c.Status(200).JSON(pkg.GetResponseMap(weathersData, int16(200)))
 }

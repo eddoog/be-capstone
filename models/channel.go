@@ -1,6 +1,6 @@
 package models
 
 type WeatherResultChannel struct {
-	StationId int
-	Data      []Weather
+	StationName string
+	Data        []Weather
 }

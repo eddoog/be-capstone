@@ -14,15 +14,15 @@ var (
 func InitializeStation() {
 	stasionsInstance = []*models.Station{
 		{
-			StationName: "Jakarta / Soekarno-Hatta",
+			StationName: "Kemayoran",
 			StationId:   96749,
 		},
 		{
-			StationName: "Jakarta / Tanjung Priok",
+			StationName: "TanjungPriok",
 			StationId:   96741,
 		},
 		{
-			StationName: "Jakarta / Halim Perdana Kusuma",
+			StationName: "Halim",
 			StationId:   96747,
 		},
 	}

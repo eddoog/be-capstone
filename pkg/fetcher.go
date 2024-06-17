@@ -11,20 +11,20 @@ import (
 )
 
 func FetchDailyWeatherData(
-	stationId int,
+	station *models.Station,
 	startDate string,
 	wg *sync.WaitGroup,
 	ch chan<- models.WeatherResultChannel,
 	errCh chan<- error,
 ) {
 	defer wg.Done()
-	defer SendInfoLog("Finished fetching data for station " + strconv.Itoa(stationId))
+	defer SendInfoLog("Finished fetching data for station " + strconv.Itoa(station.StationId))
 
 	currentTime := time.Now()
 
 	formattedDate := currentTime.Format("2006-01-02")
 
-	apiUrl := GetApiUrl() + "?station=" + strconv.Itoa(stationId) + "&start=" + startDate + "&end=" + formattedDate
+	apiUrl := GetApiUrl() + "?station=" + strconv.Itoa(station.StationId) + "&start=" + startDate + "&end=" + formattedDate
 
 	SendInfoLog("Fetching data from " + apiUrl)
 
@@ -58,12 +58,12 @@ func FetchDailyWeatherData(
 	}
 
 	ch <- models.WeatherResultChannel{
-		StationId: stationId,
-		Data:      weather,
+		StationName: station.StationName,
+		Data:        weather,
 	}
 }
 
-func FetchAllStationsData(startDate string) (map[int][]models.Weather, error) {
+func FetchAllStationsData(startDate string) (map[string][]models.Weather, error) {
 	stations := GetStations()
 
 	var wg sync.WaitGroup
@@ -75,7 +75,7 @@ func FetchAllStationsData(startDate string) (map[int][]models.Weather, error) {
 	for _, station := range stations {
 		wg.Add(1)
 
-		go FetchDailyWeatherData(station.StationId, startDate, &wg, weatherCh, errCh)
+		go FetchDailyWeatherData(station, startDate, &wg, weatherCh, errCh)
 	}
 
 	wg.Wait()
@@ -83,10 +83,10 @@ func FetchAllStationsData(startDate string) (map[int][]models.Weather, error) {
 	close(weatherCh)
 	close(errCh)
 
-	weatherDataMap := make(map[int][]models.Weather)
+	weatherDataMap := make(map[string][]models.Weather)
 
 	for result := range weatherCh {
-		weatherDataMap[result.StationId] = append(weatherDataMap[result.StationId], result.Data...)
+		weatherDataMap[result.StationName] = append(weatherDataMap[result.StationName], result.Data...)
 	}
 
 	if len(errCh) > 0 {
