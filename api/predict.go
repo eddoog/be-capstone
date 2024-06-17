@@ -33,6 +33,7 @@ func Predict(c *fiber.Ctx) error {
 	}
 
 	fmt.Println(stationMapTf)
+	pkg.PredictWithModel(stationMapTf)
 
 	return c.Status(200).JSON(pkg.GetResponseMap(weathersData, int16(200)))
 }
