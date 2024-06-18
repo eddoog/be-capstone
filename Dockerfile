@@ -20,6 +20,22 @@
 # https://hub.docker.com/_/golang
 FROM golang:1.22-bookworm AS builder
 
+
+RUN apt-get update && apt-get install -y wget git gcc build-essential && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Download and install TensorFlow C library
+RUN wget https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-2.15.0.tar.gz && \
+    tar -C /usr -xzf libtensorflow-cpu-linux-x86_64-2.15.0.tar.gz && \
+    ldconfig && \
+    rm libtensorflow-cpu-linux-x86_64-2.15.0.tar.gz
+
+# Set the environment variables to help the Go compiler find the TensorFlow C library
+ENV LD_LIBRARY_PATH /usr/local/lib
+ENV CGO_CFLAGS "-I/usr/local/include"
+ENV CGO_LDFLAGS "-L/usr/local/lib"
+
 # Create and change to the app directory.
 WORKDIR /app
 
@@ -49,6 +65,12 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /app/server
 COPY --from=builder /app/.env .
+COPY --from=builder /app/model /model
+COPY --from=builder /usr/lib/libtensorflow.so.2 /usr/local/lib/
+COPY --from=builder /usr/lib/libtensorflow_framework.so.2 /usr/local/lib/
+
+# Set the environment variables to help the runtime find the TensorFlow C library
+ENV LD_LIBRARY_PATH /usr/local/lib
 
 # Run the web service on container startup.
 
