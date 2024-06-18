@@ -17,7 +17,7 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, Raincoat!")
+		return c.SendString("Hello, Raincoat!!")
 	})
 
 	api.SetupV1API(app)
