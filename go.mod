@@ -4,6 +4,8 @@ go 1.22.3
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/galeone/tensorflow/tensorflow/go v0.0.0-20221023090153-6b7fa0680c3e // indirect
 	github.com/galeone/tfgo v0.0.0-20230715013254-16113111dc99 // indirect
 	github.com/gofiber/fiber/v2 v2.52.4 // indirect
@@ -16,6 +18,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/redis/go-redis/v9 v9.5.3 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

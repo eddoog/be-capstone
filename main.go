@@ -11,6 +11,7 @@ import (
 func init() {
 	pkg.LoadEnv()
 	pkg.InitLog()
+	pkg.GetRedisClient()
 }
 
 func main() {

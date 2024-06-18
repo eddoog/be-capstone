@@ -8,6 +8,12 @@ import (
 )
 
 func Predict(c *fiber.Ctx) error {
+	ctx := c.Context()
+
+	if val, err := pkg.GetKeyFromRedis(ctx, "prediction"); err == nil && val != "" {
+		return c.Status(200).JSON(pkg.GetResponseMap(val, int16(200)))
+	}
+
 	startDate, err := pkg.GetPastDate(pkg.GetTimeWindow() - 1)
 
 	if err != nil {
@@ -37,6 +43,13 @@ func Predict(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(pkg.GetErrorMap(
 			fmt.Errorf("error predicting with model"), int16(500)))
+	}
+
+	err = pkg.SetKeyToRedisWithExpire(ctx, "prediction", predictionResult)
+
+	if err != nil {
+		return c.Status(500).JSON(pkg.GetErrorMap(
+			fmt.Errorf(err.Error()), int16(500)))
 	}
 
 	return c.Status(200).JSON(pkg.GetResponseMap(predictionResult, int16(200)))
