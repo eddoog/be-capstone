@@ -75,6 +75,7 @@ COPY --from=builder /usr/lib/libtensorflow_framework.so.2 /usr/local/lib/
 
 # Set the environment variables to help the runtime find the TensorFlow C library
 ENV LD_LIBRARY_PATH /usr/local/lib
+ENV TZ=Asia/Jakarta
 
 # Run the web service on container startup.
 

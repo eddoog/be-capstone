@@ -18,7 +18,7 @@ func FetchDailyWeatherData(
 	errCh chan<- error,
 ) {
 	defer wg.Done()
-	defer SendInfoLog("Finished fetching data for station " + strconv.Itoa(station.StationId))
+	defer SendInfoLog("Finished fetching data for station " + strconv.Itoa(station.StationId) + " " + station.StationName + " on " + startDate)
 
 	currentTime := time.Now()
 
