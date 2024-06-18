@@ -32,8 +32,12 @@ func Predict(c *fiber.Ctx) error {
 			fmt.Errorf("error building station map tensorflow"), int16(500)))
 	}
 
-	fmt.Println(stationMapTf)
-	pkg.PredictWithModel(stationMapTf)
+	predictionResult, err := pkg.PredictWithModel(stationMapTf)
 
-	return c.Status(200).JSON(pkg.GetResponseMap(weathersData, int16(200)))
+	if err != nil {
+		return c.Status(500).JSON(pkg.GetErrorMap(
+			fmt.Errorf("error predicting with model"), int16(500)))
+	}
+
+	return c.Status(200).JSON(pkg.GetResponseMap(predictionResult, int16(200)))
 }

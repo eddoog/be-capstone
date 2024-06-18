@@ -10,10 +10,10 @@ import (
 	tg "github.com/galeone/tfgo"
 )
 
-func PredictWithModel(stationMapTf map[string]*tf.Tensor) {
+func PredictWithModel(stationMapTf map[string]*tf.Tensor) ([]models.LocationFloodPrediction, error) {
 	var wg sync.WaitGroup
 
-	predictionsResult := make(chan []models.LocationFloodPrediction)
+	predictionsResult := make(chan []models.LocationFloodPrediction, len(stationMapTf))
 	errCh := make(chan error, len(stationMapTf))
 
 	for stationName, stationTf := range stationMapTf {
@@ -26,17 +26,36 @@ func PredictWithModel(stationMapTf map[string]*tf.Tensor) {
 
 	close(predictionsResult)
 	close(errCh)
+
+	result := []models.LocationFloodPrediction{}
+
+	for predictions := range predictionsResult {
+		result = append(result, predictions...)
+	}
+
+	if len(errCh) > 0 {
+		return nil, <-errCh
+	}
+
+	return result, nil
 }
 
 func callModel(
 	stationName string,
 	stationTf *tf.Tensor,
 	wg *sync.WaitGroup,
-	predictionResult chan<- []models.LocationFloodPrediction,
+	ch chan<- []models.LocationFloodPrediction,
 	errCh chan<- error,
 ) {
-	defer wg.Done()
-	defer SendInfoLog("Finished Predicting data for station " + stationName)
+	defer func() {
+		if r := recover(); r != nil {
+			SendWarnLog("Error predicting data for station " + stationName + ": " + r.(error).Error())
+			errCh <- r.(error)
+		} else {
+			SendInfoLog("Finished Predicting data for station " + stationName)
+		}
+		wg.Done()
+	}()
 
 	modelOutputName := GetOutputModelName()
 	model := tg.LoadModel(fmt.Sprintf("model/%s", strings.ToLower(stationName)), []string{"serve"}, nil)
@@ -48,22 +67,22 @@ func callModel(
 		model.Op(modelOutputName[stationName], 0): stationTf,
 	})
 
-	climateResult := result[0].Value().([][]float32)
 	floodResult := result[1].Value().([][]float32)
 
-	fmt.Println(stationName)
-	fmt.Println(climateResult)
-	fmt.Println(floodResult)
+	locations := GetPlaces()[stationName]
+
+	var predictions []models.LocationFloodPrediction
+
+	for i, location := range locations {
+		predictions = append(predictions, models.LocationFloodPrediction{
+			LocationName: location.LocationName,
+			Latitude:     location.Latitude,
+			Longitude:    location.Longitude,
+			Value:        float64(floodResult[0][i]),
+		})
+	}
+
+	SendInfoLog("Predictions for station " + stationName + " : " + fmt.Sprint(predictions))
+
+	ch <- predictions
 }
-
-/* model := tg.LoadModel("model/halim", []string{"serve"}, nil)
-
-result := model.Exec([]tf.Output{
-	model.Op("StatefulPartitionedCall", 0),
-	model.Op("StatefulPartitionedCall", 1),
-}, map[tf.Output]*tf.Tensor{
-	model.Op("serving_default_input_2", 0): stationMapTf["Halim"],
-})
-
-climateResult := result[0].Value().([][]float32)
-floodResult := result[1].Value().([][]float32) */

@@ -7,13 +7,13 @@ import (
 )
 
 var (
-	placesInstances *models.Places
+	placesInstances map[string][]models.Location
 	placesOnce      sync.Once
 )
 
 func InitializePlaces() {
-	placesInstances = &models.Places{
-		Halim: []models.Location{
+	placesInstances = map[string][]models.Location{
+		"Halim": []models.Location{
 			{LocationName: "Balekambang", Latitude: -6.278393599999999, Longitude: 106.8496169},
 			{LocationName: "Bali Mester", Latitude: -6.2191246, Longitude: 106.8657771},
 			{LocationName: "Bambu Apus", Latitude: -6.3092491, Longitude: 106.9033981},
@@ -145,7 +145,7 @@ func InitializePlaces() {
 			{LocationName: "Tegal Parang", Latitude: -6.249095199999999, Longitude: 106.8281623},
 			{LocationName: "Ulujami", Latitude: -6.240989799999999, Longitude: 106.763273},
 		},
-		TanjungPriok: []models.Location{
+		"TanjungPriok": []models.Location{
 			{LocationName: "Ancol", Latitude: -6.132975099999999, Longitude: 106.8266873},
 			{LocationName: "Cilincing", Latitude: -6.1101657, Longitude: 106.9448985},
 			{LocationName: "Kalibaru", Latitude: -6.104635, Longitude: 106.9152021},
@@ -178,7 +178,7 @@ func InitializePlaces() {
 			{LocationName: "Tugu Utara", Latitude: -6.1252159, Longitude: 106.9093},
 			{LocationName: "Warakas", Latitude: -6.1223898, Longitude: 106.8783167},
 		},
-		Kemayoran: []models.Location{
+		"Kemayoran": []models.Location{
 			{LocationName: "Cempaka Putih Barat", Latitude: -6.1815383, Longitude: 106.8635643},
 			{LocationName: "Cempaka Putih Timur", Latitude: -6.1761468, Longitude: 106.8724156},
 			{LocationName: "Rawasari", Latitude: -6.1890998, Longitude: 106.8665147},
@@ -283,7 +283,7 @@ func InitializePlaces() {
 	}
 }
 
-func GetPlaces() *models.Places {
+func GetPlaces() map[string][]models.Location {
 	placesOnce.Do(InitializePlaces)
 
 	return placesInstances
