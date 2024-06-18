@@ -79,6 +79,7 @@ func callModel(
 			Latitude:     location.Latitude,
 			Longitude:    location.Longitude,
 			Value:        float64(floodResult[0][i]),
+			Color:        DecideHexColor(float64(floodResult[0][i])),
 		})
 	}
 
