@@ -8,6 +8,12 @@ terraform {
     bucket = "bucket-capstone-425808"
     prefix = "terraform/state"
   }
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "3.0.2"
+    }
+  }
 }
 
 resource "google_cloud_run_service_iam_policy" "noauth" {
@@ -42,7 +48,7 @@ resource "google_cloud_run_v2_service" "production" {
 
   template {
     containers {
-      image = var.image
+      image = format("%s@%s", var.image, data.docker_registry_image.get_metadata.sha256_digest)
       ports {
         container_port = 8080
       }
@@ -91,4 +97,18 @@ data "google_iam_policy" "viewer" {
       "allUsers",
     ]
   }
+}
+
+data "google_client_config" "default" {}
+
+provider "docker" {
+  registry_auth {
+    address  = "asia-southeast2-docker.pkg.dev"
+    username = "oauth2accesstoken"
+    password = data.google_client_config.default.access_token
+  }
+}
+
+data "docker_registry_image" "get_metadata" {
+  name = format("%s:%s", var.image, "latest")
 }

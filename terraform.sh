@@ -8,6 +8,6 @@ terraform fmt
 
 terraform validate
 
-terraform plan
+terraform plan -lock=false
 
-terraform apply -auto-approve
+terraform apply -auto-approve -lock=false

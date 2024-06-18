@@ -50,5 +50,5 @@ variable "bucket_location" {
 variable "image" {
   description = "The Docker image to deploy to Cloud Run."
   type        = string
-  default     = "asia-southeast2-docker.pkg.dev/capstone-425808/capstone/capstone:latest"
+  default     = "asia-southeast2-docker.pkg.dev/capstone-425808/capstone/capstone"
 }
