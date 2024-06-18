@@ -48,7 +48,11 @@ RUN go mod download
 COPY . ./
 ENV PORT=8080
 
+ARG REDIS_URL
+ENV REDIS_URL=$REDIS_URL
+
 RUN echo "PORT=$PORT" > .env
+RUN echo "REDIS_URL=$REDIS_URL" >> .env
 
 # Build the binary.
 RUN go build -v -o server
