@@ -57,6 +57,16 @@ resource "google_cloud_run_v2_service" "production" {
         name       = "bucket"
         mount_path = "/models"
       }
+
+      resources {
+        limits = {
+          cpu    = "1000m"
+          memory = "2Gi"
+        }
+
+        cpu_idle = true
+
+      }
     }
 
     volumes {
